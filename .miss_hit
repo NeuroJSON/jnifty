@@ -1,0 +1,9 @@
+project_root
+
+suppress_rule: "redundant_brackets"
+indent_function_file_body: false
+tab_width: 2
+copyright_location: "file_header"
+copyright_entity: "Qianqian Fang"
+line_length: 100
+octave: true

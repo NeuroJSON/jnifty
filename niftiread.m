@@ -19,8 +19,8 @@
 %% @deftypefnx {Function File} {} niftiread (@var{info})
 %% Read image data from a NIfTI-1/2 and Analyze7.5 formatted image file
 %%
-%% Loading a NIfTI-1/2 file specified by @var{filename}, or a two-part NIfTI 
-%% or Analyze7.5 files using @var{headerfile} and @var{imagefile}. The 
+%% Loading a NIfTI-1/2 file specified by @var{filename}, or a two-part NIfTI
+%% or Analyze7.5 files using @var{headerfile} and @var{imagefile}. The
 %% accepted file suffixes include .nii, .nii.gz, .hdr, .hdr.gz, .img, img.gz
 %%
 %% @seealso{niftiinfo, niftiwrite}
@@ -28,29 +28,28 @@
 
 function img = niftiread (filename, varargin)
 
-if(isempty(varargin) && isstruct(filename))
-    nii=nii2jnii(filename.Filename);
+if (isempty(varargin) && isstruct(filename))
+  nii = nii2jnii(filename.Filename);
 else
-    nii=nii2jnii(filename);
+  nii = nii2jnii(filename);
 end
 
-if(isfield(nii,'NIFTIData'))
-    img=nii.NIFTIData;
+if (isfield(nii, 'NIFTIData'))
+  img = nii.NIFTIData;
 else
-    error('niftiread: can not load image data from specified file');
+  error('niftiread: can not load image data from specified file');
 end
 
-endfunction
+endfunction;
 
+% !demo
+% ! %% Reading a
+% ! urlwrite('https://nifti.nimh.nih.gov/nifti-1/data/minimal.nii.gz','minimal.nii.gz')
+% ! gunzip ('minimal.nii.gz');
+% ! img=niftiread('minimal.nii');
 
-%!demo
-%! %% Reading a
-%! urlwrite('https://nifti.nimh.nih.gov/nifti-1/data/minimal.nii.gz','minimal.nii.gz')
-%! gunzip ('minimal.nii.gz');
-%! img=niftiread('minimal.nii');
-
-%!test
-%! urlwrite('https://nifti.nimh.nih.gov/nifti-1/data/minimal.nii.gz','minimal.nii.gz')
-%! gunzip ('minimal.nii.gz');
-%! img=niftiread('minimal.nii');
-%! assert (size(img),[64 64 10]);
+% !test
+% ! urlwrite('https://nifti.nimh.nih.gov/nifti-1/data/minimal.nii.gz','minimal.nii.gz')
+% ! gunzip ('minimal.nii.gz');
+% ! img=niftiread('minimal.nii');
+% ! assert (size(img),[64 64 10]);
