@@ -83,18 +83,22 @@ if(isnii<0)
     error('file must be a NIfTI (.nii/.nii.gz) or Analyze 7.5 (.hdr/.img,.hdr.gz/.img.gz) data file');
 end
 
+oflag='rb';
+
 if(regexp(filename,'\.[Ii][Mm][Gg](\.[Gg][Zz])*$'))
     hdrfile=regexprep(filename,'\.[Ii][Mm][Gg](\.[Gg][Zz])*$','.hdr$1');
+    if((exist('OCTAVE_VERSION','builtin')~=0))
+        oflag='rbz';
+    end
 end
 
 niftiheader=niiformat('nifti1');
 
 if(~isempty(regexp(hdrfile,'\.[Gg][Zz]$', 'once')) || (exist('OCTAVE_VERSION','builtin')~=0))
-    finput=fopen(hdrfile,'rb');
+    finput=fopen(hdrfile,oflag);
     input=fread(finput,inf,'uint8=>uint8');
     fclose(finput);
-    
-    if(regexp(hdrfile,'\.[Gg][Zz]$'))
+    if(regexp(hdrfile,'\.[Gg][Zz]$') && (exist('OCTAVE_VERSION','builtin')==0))
         if(~exist('gzipdecode','file'))
             error('To process zipped files, you must install gzipdecode.m from the JSONLab toolbox: http://github.com/fangq/jsonlab');
         end
@@ -222,10 +226,15 @@ end
 imgbytenum=prod(nii.hdr.dim(2:nii.hdr.dim(1)+1))*nii.voxelbyte;
 
 if(isnii==0 && ~isempty(regexp(filename,'\.[Gg][Zz]$', 'once')))
-    finput=fopen(filename,'rb');
+    finput=fopen(filename,oflag);
     input=fread(finput,inf,'uint8=>uint8');
     fclose(finput);
-    gzdata=gzipdecode(input);
+    if((exist('OCTAVE_VERSION','builtin')~=0))
+        gzdata=gzipdecode(input);
+    else
+        gzdata=input;
+    end
+    clear input;
     nii.img=typecast(gzdata(1:imgbytenum),nii.datatype);
 else
     if(~exist('gzdata','var'))
@@ -314,7 +323,7 @@ end
 nii.NIFTIData=nii0.img;
 
 if(isfield(nii0.hdr,'extension') && nii0.hdr.extension(1)>0)
-    fid=fopen(filename,'rb');
+    fid=fopen(filename,oflag);
     fseek(fid,nii0.hdr.sizeof_hdr+4,'bof');
     nii.NIFTIExtension=cell(1);
     count=1;
@@ -333,7 +342,7 @@ end
 
 if(nargout==0 && strcmp(format,'nii')==0 && strcmp(format,'jnii')==0)
     if(~exist('savejson','file'))
-        error('you must first install JSONLab from http://github.com/fangq/jsonlab/');
+        error('you must first install JSONLab from http://github.com/fangq/jsonlab/ to save to JNIfTI format');
     end
     if(regexp(format,'\.jnii$'))
         savejson('',nii,'FileName',format,varargin{:});
