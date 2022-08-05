@@ -42,14 +42,12 @@ end
 
 endfunction;
 
-# !demo
-# ! ## Reading a
-# ! urlwrite('https://nifti.nimh.nih.gov/nifti-1/data/minimal.nii.gz','minimal.nii.gz')
-# ! gunzip ('minimal.nii.gz');
-# ! img=niftiread('minimal.nii');
+%!demo
+%! ## Reading the image data of a .nii.gz file
+%! urlwrite('https://nifti.nimh.nih.gov/nifti-1/data/minimal.nii.gz', [tempdir 'minimal.nii.gz'])
+%! img=niftiread([tempdir 'minimal.nii.gz']);
 
-# !test
-# ! urlwrite('https://nifti.nimh.nih.gov/nifti-1/data/minimal.nii.gz','minimal.nii.gz')
-# ! gunzip ('minimal.nii.gz');
-# ! img=niftiread('minimal.nii');
-# ! assert (size(img),[64 64 10]);
+%!test
+%! urlwrite('https://nifti.nimh.nih.gov/nifti-1/data/minimal.nii.gz', [tempdir 'minimal.nii.gz'])
+%! img=niftiread([tempdir 'minimal.nii.gz']);
+%! assert (size(img),[64 64 10]);

@@ -101,14 +101,12 @@ end
 
 endfunction;
 
-# !demo
-# ! ## Reading a
-# ! urlwrite('https://nifti.nimh.nih.gov/nifti-1/data/minimal.nii.gz','minimal.nii.gz')
-# ! gunzip ('minimal.nii.gz');
-# ! header=niftiinfo('minimal.nii');
+%!demo
+%! ## Reading the header data in a .nii.gz file
+%! urlwrite('https://nifti.nimh.nih.gov/nifti-1/data/minimal.nii.gz', [tempdir 'minimal.nii.gz'])
+%! header=niftiinfo([tempdir 'minimal.nii.gz']);
 
-# !test
-# ! urlwrite('https://nifti.nimh.nih.gov/nifti-1/data/minimal.nii.gz','minimal.nii.gz')
-# ! gunzip ('minimal.nii.gz');
-# ! header=niftiinfo('minimal.nii');
-# ! assert (header.ImageSize,[64 64 10]);
+%!test
+%! urlwrite('https://nifti.nimh.nih.gov/nifti-1/data/minimal.nii.gz', [tempdir 'minimal.nii.gz'])
+%! header=niftiinfo([tempdir 'minimal.nii.gz']);
+%! assert (header.ImageSize,uint16([64 64 10]));

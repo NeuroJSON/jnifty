@@ -86,9 +86,10 @@ oflag = 'rb';
 
 if (regexp(filename, '\.[Ii][Mm][Gg](\.[Gg][Zz])*$'))
   hdrfile = regexprep(filename, '\.[Ii][Mm][Gg](\.[Gg][Zz])*$', '.hdr$1');
-  if ((exist('OCTAVE_VERSION', 'builtin') ~= 0))
-    oflag = 'rbz';
-  end
+end
+
+if (regexp(filename, '\.[Gg][Zz]$') && (exist('OCTAVE_VERSION', 'builtin') ~= 0))
+  oflag = 'rbz';
 end
 
 niftiheader = niiformat('nifti1');

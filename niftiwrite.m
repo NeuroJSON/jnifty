@@ -50,11 +50,16 @@ end
 
 buf = [buf, typecast(img(:)', 'uint8')];
 
+oflag = 'wb';
 if (regexp(filename, '\.[Gg][Zz]$'))
-  buf = gzipencode(buf);
+  if (exist('OCTAVE_VERSION', 'builtin') ~= 0)
+    oflag = 'wbz';
+  else
+    buf = gzipencode(buf);
+  end
 end
 
-fid = fopen(filename, 'wb');
+fid = fopen(filename, oflag);
 if (fid == 0)
   error('can not write to the specified file');
 end
@@ -63,14 +68,16 @@ fclose(fid);
 
 endfunction;
 
-# !demo
-# ! ## Reading a
-# ! urlwrite('https://nifti.nimh.nih.gov/nifti-1/data/minimal.nii.gz','minimal.nii.gz')
-# ! gunzip ('minimal.nii.gz');
-# ! header=niftiinfo('minimal.nii');
+%!demo
+%! ## Writing a .nii.gz file
+%! urlwrite('https://nifti.nimh.nih.gov/nifti-1/data/minimal.nii.gz', [tempdir 'minimal.nii.gz'])
+%! header=niftiinfo([tempdir 'minimal.nii.gz']);
+%! img=niftiread([tempdir 'minimal.nii.gz']);
+%! niftiwrite(img, [tempdir 'newfile.nii.gz'], header);
 
-# !test
-# ! urlwrite('https://nifti.nimh.nih.gov/nifti-1/data/minimal.nii.gz','minimal.nii.gz')
-# ! gunzip ('minimal.nii.gz');
-# ! header=niftiinfo('minimal.nii');
-# ! assert (header.ImageSize,[64 64 10]);
+%!test
+%! urlwrite('https://nifti.nimh.nih.gov/nifti-1/data/minimal.nii.gz', [tempdir 'minimal.nii.gz'])
+%! header=niftiinfo([tempdir 'minimal.nii.gz']);
+%! img=niftiread([tempdir 'minimal.nii.gz']);
+%! niftiwrite(img, [tempdir 'newfile.nii.gz'], header);
+%! assert(dir([tempdir 'newfile.nii.gz']).bytes, 441)
