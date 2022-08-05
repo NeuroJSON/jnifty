@@ -1,46 +1,46 @@
 function outstruct = memmapstream(bytes, format, varargin)
-%
-%    outstruct=memmapstream(bytes, format)
-%
-%    Map a byte-array (in char array or uint8/int8 array) into a structure
-%    using a dictionary (format is compatible with memmapfile in MATLAB)
-%
-%    This function is compatible with both MATLAB and GNU Octave.
-%
-%    author: Qianqian Fang (q.fang <at> neu.edu)
-%
-%    input:
-%        bytes: a char, int8 or uint8 vector or array
-%        format: a 3-column cell array in the format compatible with the
-%              'Format' parameter of memmapfile in MATLAB. It has the
-%              following structure
-%
-%             column 1: data type string, it can be one of the following
-%                'int8','int16','int32','int64',
-%                'uint8','uint16','uint32','uint64',
-%                'single','double','logical'
-%             column 2: an integer vector denoting the size of the data
-%             column 3: a string denoting the fieldname in the output struct
-%
-%             For example format={'int8',[1,8],'key'; 'float',[1,1],'value'}
-%             reads the first 8 bytes from 'bytes' as the first subfield
-%             'key' and the following 4 bytes as the floating point 'value'
-%             subfield.
-%
-%    output:
-%        outstruct: a structure containing the required field
-%
-%    example:
-%        bytestream=['Andy' 5 'JT'];
-%        format={'uint8', [1,4], 'name',
-%              'uint8', [1,1], 'age',
-%              'uint8', [1,2], 'school'};
-%        data=memmapstream(bytestream,format);
-%
-%    this file is part of JNIfTI specification: https://github.com/fangq/jnifti
-%
-%    License: Apache 2.0, see https://github.com/fangq/jnifti for details
-%
+#
+#    outstruct=memmapstream(bytes, format)
+#
+#    Map a byte-array (in char array or uint8/int8 array) into a structure
+#    using a dictionary (format is compatible with memmapfile in MATLAB)
+#
+#    This function is compatible with both MATLAB and GNU Octave.
+#
+#    author: Qianqian Fang (q.fang <at> neu.edu)
+#
+#    input:
+#        bytes: a char, int8 or uint8 vector or array
+#        format: a 3-column cell array in the format compatible with the
+#              'Format' parameter of memmapfile in MATLAB. It has the
+#              following structure
+#
+#             column 1: data type string, it can be one of the following
+#                'int8','int16','int32','int64',
+#                'uint8','uint16','uint32','uint64',
+#                'single','double','logical'
+#             column 2: an integer vector denoting the size of the data
+#             column 3: a string denoting the fieldname in the output struct
+#
+#             For example format={'int8',[1,8],'key'; 'float',[1,1],'value'}
+#             reads the first 8 bytes from 'bytes' as the first subfield
+#             'key' and the following 4 bytes as the floating point 'value'
+#             subfield.
+#
+#    output:
+#        outstruct: a structure containing the required field
+#
+#    example:
+#        bytestream=['Andy' 5 'JT'];
+#        format={'uint8', [1,4], 'name',
+#              'uint8', [1,1], 'age',
+#              'uint8', [1,2], 'school'};
+#        data=memmapstream(bytestream,format);
+#
+#    this file is part of JNIfTI specification: https://github.com/fangq/jnifti
+#
+#    License: Apache 2.0, see https://github.com/fangq/jnifti for details
+#
 
 if (nargin < 2)
   error('must provide bytes and format as inputs');

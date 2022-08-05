@@ -1,24 +1,24 @@
 function header = nifticreate(img, format)
-%
-%    header=nifticreate(img)
-%       or
-%    header=nifticreate(img,format)
-%
-%    Create a default NIfTI header
-%
-%    author: Qianqian Fang (q.fang <at> neu.edu)
-%
-%    input:
-%        img: the image data matching the header
-%        format: can only be 'nifti1'. can be ignored
-%
-%    output:
-%        header: a struct that is byte-wise compatible with NIfTI-1
-%
-%    this file is part of JNIfTI specification: https://github.com/fangq/jnifti
-%
-%    License: Apache 2.0, see https://github.com/fangq/jnifti for details
-%
+#
+#    header=nifticreate(img)
+#       or
+#    header=nifticreate(img,format)
+#
+#    Create a default NIfTI header
+#
+#    author: Qianqian Fang (q.fang <at> neu.edu)
+#
+#    input:
+#        img: the image data matching the header
+#        format: can only be 'nifti1'. can be ignored
+#
+#    output:
+#        header: a struct that is byte-wise compatible with NIfTI-1
+#
+#    this file is part of JNIfTI specification: https://github.com/fangq/jnifti
+#
+#    License: Apache 2.0, see https://github.com/fangq/jnifti for details
+#
 
 if (nargin < 2)
   format = 'nifti1';

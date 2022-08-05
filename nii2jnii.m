@@ -1,74 +1,74 @@
 function nii = nii2jnii(filename, format, varargin)
-%
-%    nii=nii2jnii(niifile, format, options)
-%       or
-%    nii2jnii(niifile, jniifile, options)
-%    nii=nii2jnii(niifile)
-%
-%    A fast and portable NIFTI-1/2 and Analyze7.5 file parser and converter
-%    to the text and binary JNIfTI formats defined in JNIfTI specification:
-%    https://github.com/fangq/jnifti
-%
-%    This function is compatible with both MATLAB and GNU Octave.
-%    It accepts .nii, .nii.gz, .hdr/.img and .hdr.gz/.img.gz input files
-%
-%    author: Qianqian Fang (q.fang <at> neu.edu)
-%
-%    input:
-%        fname: the file name to the .nii, .nii.gz, .hdr/.img or .hdr.gz/.img.gz file
-%        format:'nii' for reading the NIfTI-1/2/Analyze files;
-%               'jnii' to convert the nii data into an in-memory JNIfTI structure.
-%               'niiheader' return only the nii header without the image data
-%
-%               if format is not listed above and nii2jnii is called without
-%               an output, format must be a string specifying the output JNIfTI
-%               file name - *.jnii for text-based JNIfTI, or *.bnii for the
-%               binary version
-%        options: (optional) if saving to a .bnii file, please see the options for
-%               savebj.m (part of JSONLab); if saving to .jnii, please see the
-%               supported options for savejson.m (part of JSONLab).
-%
-%    output:
-%        if the output is a JNIfTI data structure, it has the following subfield:
-%          nii.NIFTIHeader -  a structure containing the 1-to-1 mapped NIFTI-1/2 header
-%          nii.NIFTIData - the main image data array
-%          nii.NIFTIExtension - a cell array contaiing the extension data buffers
-%
-%        when calling as nii=nii2jnii(file,'nii'), the output is a NIFTI object containing
-%          nii.img: the data volume read from the nii file
-%          nii.datatype: the data type of the voxel, in matlab data type string
-%          nii.datalen: data count per voxel - for example RGB data has 3x
-%                    uint8 per voxel, so datatype='uint8', datalen=3
-%          nii.voxelbyte: total number of bytes per voxel: for RGB data,
-%                    voxelbyte=3; also voxelbyte=header.bitpix/8
-%          nii.hdr: file header info, a structure has the full nii header
-%                    key subfileds include
-%
-%              sizeof_hdr: must be 348 (for NIFTI-1) or 540 (for NIFTI-2)
-%              dim: short array, dim(2: dim(1)+1) defines the array size
-%              datatype: the type of data stored in each voxel
-%              bitpix: total bits per voxel
-%              magic: must be 'ni1\0' or 'n+1\0'
-%
-%              For the detailed nii header, please see
-%              https://nifti.nimh.nih.gov/pub/dist/src/niftilib/nifti1.h
-%
-%    dependency:
-%          No external dependency if reading .nii/.hdr/.img files;
-%
-%          To load gzipped input files (.nii.gz/.hdr.gz/.img.gz), one must
-%          install the ZMat Toolbox (http://github.com/fangq/zmat) and
-%          JSONLab Toolbox (http://github.com/fangq/jsonlab);
-%
-%          To save files into the text/binary JNIfTI formatted files, one
-%          need to install JSONLab (http://github.com/fangq/jsonlab).
-%
-%    this file was initially developed for the MCX project: https://github.com/fangq/mcx/blob/master/utils/mcxloadnii.m
-%
-%    this file is part of JNIfTI specification: https://github.com/fangq/jnifti
-%
-%    License: Apache 2.0, see https://github.com/fangq/jnifti for details
-%
+#
+#    nii=nii2jnii(niifile, format, options)
+#       or
+#    nii2jnii(niifile, jniifile, options)
+#    nii=nii2jnii(niifile)
+#
+#    A fast and portable NIFTI-1/2 and Analyze7.5 file parser and converter
+#    to the text and binary JNIfTI formats defined in JNIfTI specification:
+#    https://github.com/fangq/jnifti
+#
+#    This function is compatible with both MATLAB and GNU Octave.
+#    It accepts .nii, .nii.gz, .hdr/.img and .hdr.gz/.img.gz input files
+#
+#    author: Qianqian Fang (q.fang <at> neu.edu)
+#
+#    input:
+#        fname: the file name to the .nii, .nii.gz, .hdr/.img or .hdr.gz/.img.gz file
+#        format:'nii' for reading the NIfTI-1/2/Analyze files;
+#               'jnii' to convert the nii data into an in-memory JNIfTI structure.
+#               'niiheader' return only the nii header without the image data
+#
+#               if format is not listed above and nii2jnii is called without
+#               an output, format must be a string specifying the output JNIfTI
+#               file name - *.jnii for text-based JNIfTI, or *.bnii for the
+#               binary version
+#        options: (optional) if saving to a .bnii file, please see the options for
+#               savebj.m (part of JSONLab); if saving to .jnii, please see the
+#               supported options for savejson.m (part of JSONLab).
+#
+#    output:
+#        if the output is a JNIfTI data structure, it has the following subfield:
+#          nii.NIFTIHeader -  a structure containing the 1-to-1 mapped NIFTI-1/2 header
+#          nii.NIFTIData - the main image data array
+#          nii.NIFTIExtension - a cell array contaiing the extension data buffers
+#
+#        when calling as nii=nii2jnii(file,'nii'), the output is a NIFTI object containing
+#          nii.img: the data volume read from the nii file
+#          nii.datatype: the data type of the voxel, in matlab data type string
+#          nii.datalen: data count per voxel - for example RGB data has 3x
+#                    uint8 per voxel, so datatype='uint8', datalen=3
+#          nii.voxelbyte: total number of bytes per voxel: for RGB data,
+#                    voxelbyte=3; also voxelbyte=header.bitpix/8
+#          nii.hdr: file header info, a structure has the full nii header
+#                    key subfileds include
+#
+#              sizeof_hdr: must be 348 (for NIFTI-1) or 540 (for NIFTI-2)
+#              dim: short array, dim(2: dim(1)+1) defines the array size
+#              datatype: the type of data stored in each voxel
+#              bitpix: total bits per voxel
+#              magic: must be 'ni1\0' or 'n+1\0'
+#
+#              For the detailed nii header, please see
+#              https://nifti.nimh.nih.gov/pub/dist/src/niftilib/nifti1.h
+#
+#    dependency:
+#          No external dependency if reading .nii/.hdr/.img files;
+#
+#          To load gzipped input files (.nii.gz/.hdr.gz/.img.gz), one must
+#          install the ZMat Toolbox (http://github.com/fangq/zmat) and
+#          JSONLab Toolbox (http://github.com/fangq/jsonlab);
+#
+#          To save files into the text/binary JNIfTI formatted files, one
+#          need to install JSONLab (http://github.com/fangq/jsonlab).
+#
+#    this file was initially developed for the MCX project: https://github.com/fangq/mcx/blob/master/utils/mcxloadnii.m
+#
+#    this file is part of JNIfTI specification: https://github.com/fangq/jnifti
+#
+#    License: Apache 2.0, see https://github.com/fangq/jnifti for details
+#
 
 hdrfile = filename;
 isnii = -1;
@@ -126,7 +126,7 @@ if (nii.hdr.sizeof_hdr ~= 348 && nii.hdr.sizeof_hdr ~= 540)
   nii.hdr.sizeof_hdr = swapbytes(nii.hdr.sizeof_hdr);
 end
 
-if (nii.hdr.sizeof_hdr == 540) % NIFTI-2 format
+if (nii.hdr.sizeof_hdr == 540) # NIFTI-2 format
   niftiheader = niiformat('nifti2');
   if (exist('gzdata', 'var'))
     nii.hdr = memmapstream(gzdata, niftiheader);
@@ -156,47 +156,47 @@ if (nii.hdr.dim(1) > 7)
 end
 
 type2byte = [
-             0  0  % unknown                      %
-             1  0  % binary (1 bit/voxel)         %
-             2  1  % unsigned char (8 bits/voxel) %
-             4  2  % signed short (16 bits/voxel) %
-             8  4  % signed int (32 bits/voxel)   %
-             16  4  % float (32 bits/voxel)        %
-             32  8  % complex (64 bits/voxel)      %
-             64  8  % double (64 bits/voxel)       %
-             128  3  % RGB triple (24 bits/voxel)   %
-             255  0  % not very useful (?)          %
-             256  1  % signed char (8 bits)         %
-             512  2  % unsigned short (16 bits)     %
-             768  4  % unsigned int (32 bits)       %
-             1024  8  % long long (64 bits)          %
-             1280  8  % unsigned long long (64 bits) %
-             1536 16  % long double (128 bits)       %
-             1792 16  % double pair (128 bits)       %
-             2048 32  % long double pair (256 bits)  %
-             2304  4  % 4 byte RGBA (32 bits/voxel)  %
+             0  0  # unknown                      #
+             1  0  # binary (1 bit/voxel)         #
+             2  1  # unsigned char (8 bits/voxel) #
+             4  2  # signed short (16 bits/voxel) #
+             8  4  # signed int (32 bits/voxel)   #
+             16  4  # float (32 bits/voxel)        #
+             32  8  # complex (64 bits/voxel)      #
+             64  8  # double (64 bits/voxel)       #
+             128  3  # RGB triple (24 bits/voxel)   #
+             255  0  # not very useful (?)          #
+             256  1  # signed char (8 bits)         #
+             512  2  # unsigned short (16 bits)     #
+             768  4  # unsigned int (32 bits)       #
+             1024  8  # long long (64 bits)          #
+             1280  8  # unsigned long long (64 bits) #
+             1536 16  # long double (128 bits)       #
+             1792 16  # double pair (128 bits)       #
+             2048 32  # long double pair (256 bits)  #
+             2304  4  # 4 byte RGBA (32 bits/voxel)  #
             ];
 
 type2str = {
-            'uint8'    0   % unknown                       %
-            'uint8'    0   % binary (1 bit/voxel)          %
-            'uint8'    1   % unsigned char (8 bits/voxel)  %
-            'uint16'   1   % signed short (16 bits/voxel)  %
-            'int32'    1   % signed int (32 bits/voxel)    %
-            'single'   1   % float (32 bits/voxel)         %
-            'single'   2   % complex (64 bits/voxel)       %
-            'double'   1   % double (64 bits/voxel)        %
-            'uint8'    3   % RGB triple (24 bits/voxel)    %
-            'uint8'    0   % not very useful (?)           %
-            'int8'     1   % signed char (8 bits)          %
-            'uint16'   1   % unsigned short (16 bits)      %
-            'uint32'   1   % unsigned int (32 bits)        %
-            'int64'    1   % long long (64 bits)           %
-            'uint64'   1   % unsigned long long (64 bits)  %
-            'uint8'    16  % long double (128 bits)        %
-            'uint8'    16  % double pair (128 bits)        %
-            'uint8'    32  % long double pair (256 bits)   %
-            'uint8'    4   % 4 byte RGBA (32 bits/voxel)   %
+            'uint8'    0   # unknown                       #
+            'uint8'    0   # binary (1 bit/voxel)          #
+            'uint8'    1   # unsigned char (8 bits/voxel)  #
+            'uint16'   1   # signed short (16 bits/voxel)  #
+            'int32'    1   # signed int (32 bits/voxel)    #
+            'single'   1   # float (32 bits/voxel)         #
+            'single'   2   # complex (64 bits/voxel)       #
+            'double'   1   # double (64 bits/voxel)        #
+            'uint8'    3   # RGB triple (24 bits/voxel)    #
+            'uint8'    0   # not very useful (?)           #
+            'int8'     1   # signed char (8 bits)          #
+            'uint16'   1   # unsigned short (16 bits)      #
+            'uint32'   1   # unsigned int (32 bits)        #
+            'int64'    1   # long long (64 bits)           #
+            'uint64'   1   # unsigned long long (64 bits)  #
+            'uint8'    16  # long double (128 bits)        #
+            'uint8'    16  # double pair (128 bits)        #
+            'uint8'    32  # long double pair (256 bits)   #
+            'uint8'    4   # 4 byte RGBA (32 bits/voxel)   #
            };
 
 typeidx = find(type2byte(:, 1) == nii.hdr.datatype);

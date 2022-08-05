@@ -1,41 +1,41 @@
 function newval = niicodemap(name, value)
-%
-%    newval=niicodemap(name, value)
-%
-%    Bi-directional conversion from NIFTI codes to human-readable JNIfTI
-%    header string values
-%
-%    author: Qianqian Fang (q.fang <at> neu.edu)
-%
-%    input:
-%        name: a header name as a string, currently support the below nii
-%              headers: 'intent_code', 'slice_code', 'datatype', 'qform',
-%              'sform' and 'xyzt_units' and their corresponding JNIfTI
-%              headers:
-%              'Intent','SliceType','DataType','QForm','SForm','Unit'
-%        value:the current header value, if it is a code, newval will
-%              output the string version; if it is a string, newval will
-%              return the code
-%
-%    output:
-%        newval: the converted header value
-%
-%        For the detailed nii header codes, please see
-%        https://nifti.nimh.nih.gov/pub/dist/src/niftilib/nifti1.h
-%
-%    example:
-%        newval=niicodemap('slice_code', '')
-%        newval=niicodemap('datatype', 'uint64')
-%        newval=niicodemap('datatype', 2)
-%
-%    this file was initially developed for the MCX project: https://github.com/fangq/mcx/blob/master/utils/mcxloadnii.m
-%
-%    this file is part of JNIfTI specification: https://github.com/fangq/jnifti
-%
-%    License: Apache 2.0, see https://github.com/fangq/jnifti for details
-%
+#
+#    newval=niicodemap(name, value)
+#
+#    Bi-directional conversion from NIFTI codes to human-readable JNIfTI
+#    header string values
+#
+#    author: Qianqian Fang (q.fang <at> neu.edu)
+#
+#    input:
+#        name: a header name as a string, currently support the below nii
+#              headers: 'intent_code', 'slice_code', 'datatype', 'qform',
+#              'sform' and 'xyzt_units' and their corresponding JNIfTI
+#              headers:
+#              'Intent','SliceType','DataType','QForm','SForm','Unit'
+#        value:the current header value, if it is a code, newval will
+#              output the string version; if it is a string, newval will
+#              return the code
+#
+#    output:
+#        newval: the converted header value
+#
+#        For the detailed nii header codes, please see
+#        https://nifti.nimh.nih.gov/pub/dist/src/niftilib/nifti1.h
+#
+#    example:
+#        newval=niicodemap('slice_code', '')
+#        newval=niicodemap('datatype', 'uint64')
+#        newval=niicodemap('datatype', 2)
+#
+#    this file was initially developed for the MCX project: https://github.com/fangq/mcx/blob/master/utils/mcxloadnii.m
+#
+#    this file is part of JNIfTI specification: https://github.com/fangq/jnifti
+#
+#    License: Apache 2.0, see https://github.com/fangq/jnifti for details
+#
 
-% code to name look-up-table
+# code to name look-up-table
 
 if (~exist('containers.Map'))
   newval = value;
@@ -68,7 +68,7 @@ lut.sform = lut.qform;
 lut.slicetype = lut.slice_code;
 lut.intent = lut.intent_code;
 
-% inverse look up table
+# inverse look up table
 
 tul.intent_code = containers.Map(values(lut.intent_code), keys(lut.intent_code));
 tul.slice_code = containers.Map(values(lut.slice_code), keys(lut.slice_code));
@@ -81,7 +81,7 @@ tul.slicetype = tul.slice_code;
 tul.intent = tul.intent_code;
 tul.unit = tul.xyzt_units;
 
-% map from code to name, or frmo name to code
+# map from code to name, or frmo name to code
 
 if (~isfield(lut, lower(name)))
   error('property can not be found');
