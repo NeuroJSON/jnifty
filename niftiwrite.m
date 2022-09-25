@@ -30,6 +30,7 @@
 ##     if info is set to 'nifti1' or 'nifti2', it will be passed as the format
 ##     input to @code{nifticreate} 
 ##
+## example code:
 ## @example:
 ##   img=rand(10,20,30);
 ##   niftiwrite(img, [tempdir 'randimg1.nii.gz']);
@@ -41,43 +42,39 @@
 
 function niftiwrite (img, filename, varargin)
 
-  if (~isempty(varargin))
-    if (isstruct(varargin{1}) && isfield(varargin{1}, 'raw'))
+  if (~isempty (varargin))
+    if (isstruct (varargin{1}) && isfield (varargin{1}, 'raw'))
       header = varargin{1}.raw;
-    elseif (ischar(varargin{1}))
-      header = nifticreate(img, varargin{1});
-    end
+    elseif (ischar (varargin{1}))
+      header = nifticreate (img, varargin{1});
+    endif
   else
-    header = nifticreate(img);
-  end
+    header = nifticreate (img);
+  endif
 
-  names = fieldnames(header);
+  names = fieldnames (header);
   buf = [];
-  for i = 1:length(names)
+  for i = 1:length (names)
     buf = [buf, typecast(header.(names{i}), 'uint8')];
-  end
+  endfor
 
-  if (length(buf) ~= 352 && length(buf) ~= 544)
-    error('incorrect nifti-1/2 header %d', length(buf));
-  end
+  if (length (buf) ~= 352 && length (buf) ~= 544)
+    error ('niftiwrite: incorrect nifti-1/2 header %d', length (buf));
+  endif
 
   buf = [buf, typecast(img(:)', 'uint8')];
 
   oflag = 'wb';
-  if (regexp(filename, '\.[Gg][Zz]$'))
-    if (exist('OCTAVE_VERSION', 'builtin') ~= 0)
-      oflag = 'wbz';
-    else
-      buf = gzipencode(buf);
-    end
-  end
+  if (regexp (filename, '\.[Gg][Zz]$'))
+    oflag = 'wbz';
+  endif
 
-  fid = fopen(filename, oflag);
+  fid = fopen (filename, oflag);
   if (fid == 0)
-    error('can not write to the specified file');
-  end
-  fwrite(fid, buf);
-  fclose(fid);
+    error ('niftiwrite: can not write to the specified file');
+  endif
+  fwrite (fid, buf);
+  fclose (fid);
 
 endfunction
 

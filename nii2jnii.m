@@ -56,6 +56,7 @@
 ##       nii.NIFTIData - the main image data array
 ##       nii.NIFTIExtension - a cell array contaiing the extension data buffers
 ##
+## example code:
 ## @example:
 ##   img=rand(10,20,30);
 ##   niftiwrite(img, [tempdir 'randnii1.nii.gz']);
@@ -66,55 +67,46 @@
 ## @seealso{niftiread, niftiwrite}
 ## @end deftypefn
 
-function nii = nii2jnii(filename, format, varargin)
+function nii = nii2jnii (filename, format, varargin)
 
   hdrfile = filename;
   isnii = -1;
-  if (regexp(filename, '(\.[Hh][Dd][Rr](\.[Gg][Zz])*$|\.[Ii][Mm][Gg](\.[Gg][Zz])*$)'))
+  if (regexp (filename, '(\.[Hh][Dd][Rr](\.[Gg][Zz])*$|\.[Ii][Mm][Gg](\.[Gg][Zz])*$)'))
     isnii = 0;
-  elseif (regexp(filename, '\.[Nn][Ii][Ii](\.[Gg][Zz])*$'))
+  elseif (regexp (filename, '\.[Nn][Ii][Ii](\.[Gg][Zz])*$'))
     isnii = 1;
   endif
 
   if (isnii < 0)
-    error('file must be a NIfTI (.nii/.nii.gz) or Analyze 7.5 (.hdr/.img,.hdr.gz/.img.gz) data file');
+    error ('nii2jnii: file must be a NIfTI (.nii/.nii.gz) or Analyze 7.5 (.hdr/.img,.hdr.gz/.img.gz) data file');
   endif
 
   oflag = 'rb';
 
-  if (regexp(filename, '\.[Ii][Mm][Gg](\.[Gg][Zz])*$'))
-    hdrfile = regexprep(filename, '\.[Ii][Mm][Gg](\.[Gg][Zz])*$', '.hdr$1');
+  if (regexp (filename, '\.[Ii][Mm][Gg](\.[Gg][Zz])*$'))
+    hdrfile = regexprep (filename, '\.[Ii][Mm][Gg](\.[Gg][Zz])*$', '.hdr$1');
   endif
 
-  if (regexp(filename, '\.[Gg][Zz]$') && (exist('OCTAVE_VERSION', 'builtin') ~= 0))
+  if (regexp (filename, '\.[Gg][Zz]$'))
     oflag = 'rbz';
   endif
 
-  niftiheader = niiformat('nifti1');
+  niftiheader = niiformat ('nifti1');
 
-  if (~isempty(regexp(hdrfile, '\.[Gg][Zz]$', 'once')) || (exist('OCTAVE_VERSION', 'builtin') ~= 0))
-    finput = fopen(hdrfile, oflag);
-    input = fread(finput, inf, 'uint8=>uint8');
-    fclose(finput);
-    if (regexp(hdrfile, '\.[Gg][Zz]$') && (exist('OCTAVE_VERSION', 'builtin') == 0))
-      if (~exist('gzipdecode', 'file'))
-        error('Reading gzipped files requires either Octave or JSONLab (http://github.com/fangq/jsonlab)');
-      endif
-      gzdata = gzipdecode(input);
-    else
-      gzdata = input;
-    endif
-    clear input;
-    nii.hdr = memmapstream(gzdata, niftiheader);
+  if (~isempty (regexp (hdrfile, '\.[Gg][Zz]$', 'once')))
+    finput = fopen (hdrfile, oflag);
+    gzdata = fread (finput, inf, 'uint8=>uint8');
+    fclose (finput);
+    nii.hdr = memmapstream (gzdata, niftiheader);
   else
-    fileinfo = dir(hdrfile);
-    if (isempty(fileinfo))
-      error('specified file does not exist');
+    fileinfo = dir (hdrfile);
+    if (isempty (fileinfo))
+      error ('nii2jnii: specified file does not exist');
     endif
-    header = memmapfile(hdrfile,             ...
+    header = memmapfile (hdrfile,             ...
                         'Offset', 0,                          ...
                         'Writable', false,                    ...
-                        'Format', niftiheader(1:end - (fileinfo.bytes < 352), :));
+                        'Format', niftiheader (1:end - (fileinfo.bytes < 352), :));
 
     nii.hdr = header.Data(1);
   endif
@@ -122,30 +114,30 @@ function nii = nii2jnii(filename, format, varargin)
   [os, maxelem, dataendian] = computer;
 
   if (nii.hdr.sizeof_hdr ~= 348 && nii.hdr.sizeof_hdr ~= 540)
-    nii.hdr.sizeof_hdr = swapbytes(nii.hdr.sizeof_hdr);
+    nii.hdr.sizeof_hdr = swapbytes (nii.hdr.sizeof_hdr);
   endif
 
   if (nii.hdr.sizeof_hdr == 540) # NIFTI-2 format
-    niftiheader = niiformat('nifti2');
-    if (exist('gzdata', 'var'))
-      nii.hdr = memmapstream(gzdata, niftiheader);
+    niftiheader = niiformat ('nifti2');
+    if (exist ('gzdata', 'var'))
+      nii.hdr = memmapstream (gzdata, niftiheader);
     else
-      header = memmapfile(hdrfile,                ...
+      header = memmapfile (hdrfile,                ...
                           'Offset', 0,                           ...
                           'Writable', false,                     ...
-                          'Format', niftiheader(1:end - (fileinfo.bytes < 352), :));
+                          'Format', niftiheader (1:end - (fileinfo.bytes < 352), :));
 
       nii.hdr = header.Data(1);
     endif
   endif
 
   if (nii.hdr.dim(1) > 7)
-    names = fieldnames(nii.hdr);
-    for i = 1:length(names)
-      nii.hdr.(names{i}) = swapbytes(nii.hdr.(names{i}));
+    names = fieldnames (nii.hdr);
+    for i = 1:length (names)
+      nii.hdr.(names{i}) = swapbytes (nii.hdr.(names{i}));
     endfor
     if (nii.hdr.sizeof_hdr > 540)
-      nii.hdr.sizeof_hdr = swapbytes(nii.hdr.sizeof_hdr);
+      nii.hdr.sizeof_hdr = swapbytes (nii.hdr.sizeof_hdr);
     endif
     if (dataendian == 'B')
       dataendian = 'little';
@@ -198,7 +190,7 @@ function nii = nii2jnii(filename, format, varargin)
               'uint8'    4   # 4 byte RGBA (32 bits/voxel)   #
              };
 
-  typeidx = find(type2byte(:, 1) == nii.hdr.datatype);
+  typeidx = find (type2byte(:, 1) == nii.hdr.datatype);
 
   nii.datatype = type2str{typeidx, 1};
   nii.datalen = type2str{typeidx, 2};
@@ -213,95 +205,89 @@ function nii = nii2jnii(filename, format, varargin)
     nii.hdr.dim = [nii.hdr.dim(1) + 1 uint16(nii.datalen) nii.hdr.dim(2:end)];
   endif
 
-  if (nargin > 1 && strcmp(format, 'niiheader'))
+  if (nargin > 1 && strcmp (format, 'niiheader'))
     return
   endif
 
-  if (regexp(filename, '\.[Hh][Dd][Rr](\.[Gg][Zz])*$'))
-    filename = regexprep(filename, '\.[Hh][Dd][Rr](\.[Gg][Zz])*$', '.img$1');
+  if (regexp (filename, '\.[Hh][Dd][Rr](\.[Gg][Zz])*$'))
+    filename = regexprep (filename, '\.[Hh][Dd][Rr](\.[Gg][Zz])*$', '.img$1');
   endif
 
-  imgbytenum = prod(nii.hdr.dim(2:nii.hdr.dim(1) + 1)) * nii.voxelbyte;
+  imgbytenum = prod (nii.hdr.dim(2:nii.hdr.dim(1) + 1)) * nii.voxelbyte;
 
-  if (isnii == 0 && ~isempty(regexp(filename, '\.[Gg][Zz]$', 'once')))
-    finput = fopen(filename, oflag);
-    input = fread(finput, inf, 'uint8=>uint8');
-    fclose(finput);
-    if ((exist('OCTAVE_VERSION', 'builtin') ~= 0))
-      gzdata = gzipdecode(input);
-    else
-      gzdata = input;
-    endif
-    clear input;
-    nii.img = typecast(gzdata(1:imgbytenum), nii.datatype);
+  if (isnii == 0 && ~isempty (regexp (filename, '\.[Gg][Zz]$', 'once')))
+    finput = fopen (filename, oflag);
+    gzdata = fread (finput, inf, 'uint8=>uint8');
+    fclose (finput);
+    nii.img = typecast (gzdata(1:imgbytenum), nii.datatype);
   else
-    if (~exist('gzdata', 'var'))
-      fid = fopen(filename, 'rb');
+    if (~exist ('gzdata', 'var'))
+      fid = fopen (filename, 'rb');
       if (isnii)
-        fseek(fid, nii.hdr.vox_offset, 'bof');
+        fseek (fid, nii.hdr.vox_offset, 'bof');
       endif
-      nii.img = fread(fid, imgbytenum, [nii.datatype '=>' nii.datatype]);
-      fclose(fid);
+      nii.img = fread (fid, imgbytenum, [nii.datatype '=>' nii.datatype]);
+      fclose (fid);
     else
-      nii.img = typecast(gzdata(nii.hdr.vox_offset + 1:nii.hdr.vox_offset + imgbytenum), nii.datatype);
+      nii.img = typecast (gzdata(nii.hdr.vox_offset + 1:nii.hdr.vox_offset + imgbytenum), nii.datatype);
     endif
   endif
 
-  nii.img = reshape(nii.img, nii.hdr.dim(2:nii.hdr.dim(1) + 1));
+  nii.img = reshape (nii.img, nii.hdr.dim(2:nii.hdr.dim(1) + 1));
 
-  if (nargin > 1 && strcmp(format, 'nii'))
+  if (nargin > 1 && strcmp (format, 'nii'))
     return
   endif
 
   nii0 = nii;
-  nii = struct();
+  nii = struct ();
   nii.NIFTIHeader.NIIHeaderSize =  nii0.hdr.sizeof_hdr;
 
-  if (isfield(nii0.hdr, 'data_type'))
-    nii.NIFTIHeader.A75DataTypeName = deblank(char(nii0.hdr.data_type));
-    nii.NIFTIHeader.A75DBName =      deblank(char(nii0.hdr.db_name));
+  if (isfield (nii0.hdr, 'data_type'))
+    nii.NIFTIHeader.A75DataTypeName = deblank (char (nii0.hdr.data_type));
+    nii.NIFTIHeader.A75DBName =      deblank (char (nii0.hdr.db_name));
     nii.NIFTIHeader.A75Extends =     nii0.hdr.extents;
     nii.NIFTIHeader.A75SessionError = nii0.hdr.session_error;
     nii.NIFTIHeader.A75Regular =     nii0.hdr.regular;
   endif
 
-  nii.NIFTIHeader.DimInfo.Freq =   bitand(nii0.hdr.dim_info, 7);
-  nii.NIFTIHeader.DimInfo.Phase =  bitand(bitshift(nii0.hdr.dim_info, -3), 7);
-  nii.NIFTIHeader.DimInfo.Slice =  bitand(bitshift(nii0.hdr.dim_info, -6), 7);
+  nii.NIFTIHeader.DimInfo.Freq =   bitand (nii0.hdr.dim_info, 7);
+  nii.NIFTIHeader.DimInfo.Phase =  bitand (bitshift (nii0.hdr.dim_info, -3), 7);
+  nii.NIFTIHeader.DimInfo.Slice =  bitand (bitshift (nii0.hdr.dim_info, -6), 7);
   nii.NIFTIHeader.Dim =            nii0.hdr.dim(2:2 + nii0.hdr.dim(1) - 1);
   nii.NIFTIHeader.Param1 =         nii0.hdr.intent_p1;
   nii.NIFTIHeader.Param2 =         nii0.hdr.intent_p2;
   nii.NIFTIHeader.Param3 =         nii0.hdr.intent_p3;
-  nii.NIFTIHeader.Intent =         niicodemap('intent', nii0.hdr.intent_code);
-  nii.NIFTIHeader.DataType =       niicodemap('datatype', nii0.hdr.datatype);
+  nii.NIFTIHeader.Intent =         niicodemap ('intent', nii0.hdr.intent_code);
+  nii.NIFTIHeader.DataType =       niicodemap ('datatype', nii0.hdr.datatype);
   nii.NIFTIHeader.BitDepth =       nii0.hdr.bitpix;
   nii.NIFTIHeader.FirstSliceID =   nii0.hdr.slice_start;
   nii.NIFTIHeader.VoxelSize =      nii0.hdr.pixdim(2:2 + nii0.hdr.dim(1) - 1);
-  nii.NIFTIHeader.Orientation =    struct('x', 'r', 'y', 'a', 'z', 's');
+  nii.NIFTIHeader.Orientation =    struct ('x', 'r', 'y', 'a', 'z', 's');
 
   if (nii0.hdr.pixdim(1) < 0)
-    nii.NIFTIHeader.Orientation =    struct('x', 'l', 'y', 'a', 'z', 's');
+    nii.NIFTIHeader.Orientation =    struct ('x', 'l', 'y', 'a', 'z', 's');
   endif
 
   nii.NIFTIHeader.NIIByteOffset =  nii0.hdr.vox_offset;
   nii.NIFTIHeader.ScaleSlope =     nii0.hdr.scl_slope;
   nii.NIFTIHeader.ScaleOffset =    nii0.hdr.scl_inter;
   nii.NIFTIHeader.LastSliceID =    nii0.hdr.slice_end;
-  nii.NIFTIHeader.SliceType =      niicodemap('slicetype', nii0.hdr.slice_code);
-  nii.NIFTIHeader.Unit.L =         niicodemap('unit', bitand(nii0.hdr.xyzt_units, 7));
-  nii.NIFTIHeader.Unit.T =         niicodemap('unit', bitand(nii0.hdr.xyzt_units, 56));
+  nii.NIFTIHeader.SliceType =      niicodemap ('slicetype', nii0.hdr.slice_code);
+  nii.NIFTIHeader.Unit.L =         niicodemap ('unit', bitand (nii0.hdr.xyzt_units, 7));
+  nii.NIFTIHeader.Unit.T =         niicodemap ('unit', bitand (nii0.hdr.xyzt_units, 56));
   nii.NIFTIHeader.MaxIntensity =   nii0.hdr.cal_max;
   nii.NIFTIHeader.MinIntensity =   nii0.hdr.cal_min;
   nii.NIFTIHeader.SliceTime =      nii0.hdr.slice_duration;
   nii.NIFTIHeader.TimeOffset =     nii0.hdr.toffset;
 
-  if (isfield(nii0.hdr, 'glmax'))
+  if (isfield (nii0.hdr, 'glmax'))
     nii.NIFTIHeader.A75GlobalMax =   nii0.hdr.glmax;
     nii.NIFTIHeader.A75GlobalMin =   nii0.hdr.glmin;
   endif
 
-  nii.NIFTIHeader.Description =    deblank(char(nii0.hdr.descrip));
-  nii.NIFTIHeader.AuxFile =        deblank(char(nii0.hdr.aux_file));
+  nii.NIFTIHeader.Description =    deblank (char (nii0.hdr.descrip));
+  nii.NIFTIHeader.AuxFile =        deblank (char (nii0.hdr.aux_file));
   nii.NIFTIHeader.QForm =          nii0.hdr.qform_code;
   nii.NIFTIHeader.SForm =          nii0.hdr.sform_code;
   nii.NIFTIHeader.Quatern.b =      nii0.hdr.quatern_b;
@@ -313,50 +299,50 @@ function nii = nii2jnii(filename, format, varargin)
   nii.NIFTIHeader.Affine(1, :) =    nii0.hdr.srow_x;
   nii.NIFTIHeader.Affine(2, :) =    nii0.hdr.srow_y;
   nii.NIFTIHeader.Affine(3, :) =    nii0.hdr.srow_z;
-  nii.NIFTIHeader.Name =           deblank(char(nii0.hdr.intent_name));
-  nii.NIFTIHeader.NIIFormat =      deblank(char(nii0.hdr.magic));
+  nii.NIFTIHeader.Name =           deblank (char (nii0.hdr.intent_name));
+  nii.NIFTIHeader.NIIFormat =      deblank (char (nii0.hdr.magic));
 
-  if (isfield(nii0.hdr, 'extension'))
+  if (isfield (nii0.hdr, 'extension'))
     nii.NIFTIHeader.NIIExtender =    nii0.hdr.extension;
   endif
 
   nii.NIFTIHeader.NIIQfac_ =       nii0.hdr.pixdim(1);
   nii.NIFTIHeader.NIIEndian_ =     dataendian;
 
-  if (isfield(nii0.hdr, 'reserved'))
+  if (isfield (nii0.hdr, 'reserved'))
     nii.NIFTIHeader.NIIUnused_ = nii0.hdr.reserved;
   endif
 
   nii.NIFTIData = nii0.img;
 
-  if (isfield(nii0.hdr, 'extension') && nii0.hdr.extension(1) > 0)
-    fid = fopen(filename, oflag);
-    fseek(fid, nii0.hdr.sizeof_hdr + 4, 'bof');
+  if (isfield (nii0.hdr, 'extension') && nii0.hdr.extension(1) > 0)
+    fid = fopen (filename, oflag);
+    fseek (fid, nii0.hdr.sizeof_hdr + 4, 'bof');
     nii.NIFTIExtension = cell(1);
     count = 1;
-    while (ftell(fid) < nii0.hdr.vox_offset)
-      nii.NIFTIExtension{count}.Size = fread(fid, 1, 'int32=>int32');
-      nii.NIFTIExtension{count}.Type = fread(fid, 1, 'int32=>int32');
-      if (strcmp(dataendian, 'big'))
-        nii.NIFTIExtension{count}.Size = swapbytes(nii.NIFTIExtension{count}.Size);
-        nii.NIFTIExtension{count}.Type = swapbytes(nii.NIFTIExtension{count}.Type);
+    while (ftell (fid) < nii0.hdr.vox_offset)
+      nii.NIFTIExtension{count}.Size = fread (fid, 1, 'int32=>int32');
+      nii.NIFTIExtension{count}.Type = fread (fid, 1, 'int32=>int32');
+      if (strcmp (dataendian, 'big'))
+        nii.NIFTIExtension{count}.Size = swapbytes (nii.NIFTIExtension{count}.Size);
+        nii.NIFTIExtension{count}.Type = swapbytes (nii.NIFTIExtension{count}.Type);
       endif
-      nii.NIFTIExtension{count}.x0x5F_ByteStream_ = fread(fid, nii.NIFTIExtension{count}.Size - 8, 'uint8=>uint8');
+      nii.NIFTIExtension{count}.x0x5F_ByteStream_ = fread (fid, nii.NIFTIExtension{count}.Size - 8, 'uint8=>uint8');
       count = count + 1;
     endwhile
     fclose(fid);
   endif
 
-  if (nargout == 0 && strcmp(format, 'nii') == 0 && strcmp(format, 'jnii') == 0)
-    if (~exist('savejson', 'file'))
-      error('you must first install JSONLab from http://github.com/fangq/jsonlab/ to save to JNIfTI format');
+  if (nargout == 0 && strcmp (format, 'nii') == 0 && strcmp (format, 'jnii') == 0)
+    if (~exist ('savejson', 'file'))
+      error ('nii2jnii: you must first install JSONLab from http://github.com/fangq/jsonlab/ to save to JNIfTI format');
     endif
-    if (regexp(format, '\.jnii$'))
-      savejson('', nii, 'FileName', format, varargin{:});
-    elseif (regexp(format, '\.bnii$'))
-      savebj('', nii, 'FileName', format, varargin{:});
+    if (regexp (format, '\.jnii$'))
+      savejson ('', nii, 'FileName', format, varargin{:});
+    elseif (regexp (format, '\.bnii$'))
+      savebj ('', nii, 'FileName', format, varargin{:});
     else
-      error('file suffix must be .jnii for text JNIfTI or .bnii for binary JNIfTI');
+      error ('nii2jnii: file suffix must be .jnii for text JNIfTI or .bnii for binary JNIfTI');
     endif
   endif
 

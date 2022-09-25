@@ -28,6 +28,7 @@
 ##   @var{nii} is a struct storing the metadata/header in the file.
 ##     a subfield 'raw' stores the byte-wise compatible NIfTI header struct
 ##
+## example code:
 ## @example:
 ##   urlwrite('https://nifti.nimh.nih.gov/nifti-1/data/minimal.nii.gz', [tempdir 'minimal.nii.gz']);
 ##   header=niftiinfo([tempdir 'minimal.nii.gz'])
@@ -39,30 +40,30 @@
 function nii = niftiinfo (filename, varargin)
 
   if (nargin < 1)
-    error('must provide the file name');
-  end
+    error ('niftiinfo: must provide the file name');
+  endif
 
   try
-    header = nii2jnii(filename, 'niiheader');
+    header = nii2jnii (filename, 'niiheader');
 
-    fileinfo = dir(filename);
-    nii = struct('Filename', which(filename), ...
+    fileinfo = dir (filename);
+    nii = struct ('Filename', which (filename), ...
                  'Filemoddate', fileinfo.date, ...
                  'Filesize', fileinfo.bytes, ...
                  'Version', 'NIfTI1', ...
-                 'Description', deblank(char(header.hdr.descrip)), ...
+                 'Description', deblank (char (header.hdr.descrip)), ...
                  'ImageSize', header.hdr.dim(2:header.hdr.dim(1) + 1), ...
                  'PixelDimensions', header.hdr.pixdim(2:header.hdr.dim(1) + 1), ...
                  'Datatype', header.datatype, ...
                  'BitsPerPixel', header.hdr.bitpix, ...
-                 'SpaceUnits', niicodemap('unit', bitand(header.hdr.xyzt_units, 7)), ...
-                 'TimeUnits', niicodemap('unit', bitand(header.hdr.xyzt_units, 56)), ...
+                 'SpaceUnits', niicodemap ('unit', bitand (header.hdr.xyzt_units, 7)), ...
+                 'TimeUnits', niicodemap ('unit', bitand (header.hdr.xyzt_units, 56)), ...
                  'AdditiveOffset', header.hdr.scl_inter, ...
                  'MultiplicativeScaling', header.hdr.scl_slope, ...
                  'TimeOffset', header.hdr.toffset, ...
-                 'SliceCode', niicodemap('slicetype', header.hdr.slice_code), ...
-                 'FrequencyDimension', bitand(header.hdr.dim_info, 7), ...
-                 'PhaseDimension', bitand(bitshift(header.hdr.dim_info, -3), 7), ...
+                 'SliceCode', niicodemap ('slicetype', header.hdr.slice_code), ...
+                 'FrequencyDimension', bitand (header.hdr.dim_info, 7), ...
+                 'PhaseDimension', bitand (bitshift (header.hdr.dim_info, -3), 7), ...
                  'SpatialDimension', 0, ...
                  'DisplayIntensityRange', [header.hdr.cal_min, header.hdr.cal_max], ...
                  'TransformName', 0, ...
@@ -72,7 +73,7 @@ function nii = niftiinfo (filename, varargin)
                 );
     if (header.hdr.sizeof_hdr == 540)
       nii.Version = 'NIfTI2';
-    end
+    endif
     if (header.hdr.sform_code > 0)
       nii.TransformName = 'Sform';
       Aaffine = [header.hdr.srow_x; header.hdr.srow_y; header.hdr.srow_z]';
@@ -82,34 +83,34 @@ function nii = niftiinfo (filename, varargin)
       b = header.hdr.quatern_b;
       c = header.hdr.quatern_c;
       d = header.hdr.quatern_d;
-      a = sqrt(1.0 - (b * b + c * c + d * d));
+      a = sqrt (1.0 - (b * b + c * c + d * d));
       R = [a * a + b * b - c * c - d * d   2 * b * c - 2 * a * d       2 * b * d + 2 * a * c
            2 * b * c + 2 * a * d       a * a + c * c - b * b - d * d   2 * c * d - 2 * a * b
            2 * b * d - 2 * a * c       2 * c * d + 2 * a * b       a * a + d * d - c * c - b * b];
-      if (det(R) == 0)
+      if (det (R) == 0)
         Aaffine = [R [nii0.hdr.qoffset_x, nii0.hdr.qoffset_y, nii0.hdr.qoffset_z]']';
       else
-        Aaffine = [R * diag([header.hdr.pixdim(2:3), header.hdr.pixdim(1) * header.hdr.pixdim(4)]) ...
+        Aaffine = [R * diag ([header.hdr.pixdim(2:3), header.hdr.pixdim(1) * header.hdr.pixdim(4)]) ...
                    [nii0.hdr.qoffset_x, nii0.hdr.qoffset_y, nii0.hdr.qoffset_z]']';
-      end
+      endif
       Aaffine(4, 4) = 1;
     else
       nii.TransformName = 'Old';
-      Aaffine = diag(header.hdr.pixdim(2:4));
+      Aaffine = diag (header.hdr.pixdim(2:4));
       Aaffine(4, 4) = 1;
-    end
-    if (exist('Aaffine', 'var'))
-      if (exist('affine3d'))
-        nii.Transform = affine3d(Aaffine);
+    endif
+    if (exist ('Aaffine', 'var'))
+      if (exist ('affine3d'))
+        nii.Transform = affine3d (Aaffine);
       else
         nii.Transform = Aaffine;
-      end
+      endif
     else
-      nii.Transform = diag([1, 1, 1, 1]);
-    end
+      nii.Transform = diag ([1, 1, 1, 1]);
+    endif
   catch ME
-    rethrow(ME);
-  end
+    rethrow (ME);
+  end_try_catch
 
 endfunction
 

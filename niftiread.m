@@ -32,6 +32,7 @@
 ## output:
 ##   @var{img} stores the volume data read from the input file
 ##
+## example code:
 ## @example:
 ##   urlwrite('https://nifti.nimh.nih.gov/nifti-1/data/minimal.nii.gz', [tempdir 'minimal.nii.gz']);
 ##   img=niftiread([tempdir 'minimal.nii.gz']);
@@ -42,17 +43,17 @@
 
 function img = niftiread (filename, varargin)
 
-  if (isempty(varargin) && isstruct(filename))
-    nii = nii2jnii(filename.Filename);
+  if (isempty (varargin) && isstruct (filename))
+    nii = nii2jnii (filename.Filename);
   else
-    nii = nii2jnii(filename);
-  end
+    nii = nii2jnii (filename);
+  endif
 
-  if (isfield(nii, 'NIFTIData'))
+  if (isfield (nii, 'NIFTIData'))
     img = nii.NIFTIData;
   else
-    error('niftiread: can not load image data from specified file');
-  end
+    error ('niftiread: can not load image data from specified file');
+  endif
 
 endfunction
 

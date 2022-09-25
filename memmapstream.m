@@ -42,6 +42,7 @@
 ## output:
 ##   @var{data}: a structure containing the required field
 ##
+## example code:
 ## @example
 ##   bytestream=['Andy' 5 'JT'];
 ##   format={'uint8', [1,4], 'name',
@@ -53,23 +54,23 @@
 ## @seealso{niftiread, niftiwrite}
 ## @end deftypefn
 
-function outstruct = memmapstream(bytes, format, varargin)
+function outstruct = memmapstream (bytes, format, varargin)
 
   if (nargin < 2)
-    error('must provide bytes and format as inputs');
+    error ('memmapstream: must provide bytes and format as inputs');
   endif
 
-  if (~ischar(bytes) && ~isa(bytes, 'int8') && ~isa(bytes, 'uint8') || isempty(bytes))
-    error('first input, bytes, must be a char-array or uint8/int8 vector');
+  if (~ischar (bytes) && ~isa (bytes, 'int8') && ~isa (bytes, 'uint8') || isempty (bytes))
+    error ('memmapstream: first input, bytes, must be a char-array or uint8/int8 vector');
   endif
 
-  if (~iscell(format) || size(format, 2) < 3 || size(format, 1) == 0 || ~ischar(format{1, 1}))
-    error('format must be a 3-column cell array, see help for more details.');
+  if (~iscell (format) || size (format, 2) < 3 || size (format, 1) == 0 || ~ischar (format{1, 1}))
+    error ('memmapstream: format must be a 3-column cell array, see help for more details.');
   endif
 
   bytes = bytes(:)';
 
-  datatype = struct('int8', 1, 'int16', 2, 'int32', 4, 'int64', 8, 'uint8', 1, ...
+  datatype = struct ('int8', 1, 'int16', 2, 'int32', 4, 'int64', 8, 'uint8', 1, ...
                     'uint16', 2, 'uint32', 4, 'uint64', 8, 'single', 4, 'double', 8);
 
   usemap = 0;
@@ -79,20 +80,20 @@ function outstruct = memmapstream(bytes, format, varargin)
   endif
 
   if (usemap)
-    outstruct = containers.Map();
+    outstruct = containers.Map ();
   else
-    outstruct = struct();
+    outstruct = struct ();
   endif
   len = 1;
   for i = 1:size(format, 1)
-    bytelen = datatype.(format{i, 1}) * prod(format{i, 2});
+    bytelen = datatype.(format{i, 1}) * prod (format{i, 2});
     if (usemap)
-      outstruct(format{i, 3}) = reshape(typecast(uint8(bytes(len:bytelen + len - 1)), format{i, 1}), format{i, 2});
+      outstruct(format{i, 3}) = reshape (typecast (uint8 (bytes(len:bytelen + len - 1)), format{i, 1}), format{i, 2});
     else
-      outstruct.(format{i, 3}) = reshape(typecast(uint8(bytes(len:bytelen + len - 1)), format{i, 1}), format{i, 2});
+      outstruct.(format{i, 3}) = reshape (typecast (uint8 (bytes(len:bytelen + len - 1)), format{i, 1}), format{i, 2});
     endif
     len = len + bytelen;
-    if (len > length(bytes))
+    if (len > length (bytes))
       break
     endif
   endfor

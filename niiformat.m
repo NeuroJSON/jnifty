@@ -34,6 +34,7 @@
 ##   column 2: an integer vector denoting the size of the data
 ##   column 3: a string denoting the fieldname in the output struct
 ##
+## example code:
 ## @example:
 ##   n1mmap=niiformat()
 ##   n1mmap=niiformat('nifti1')
@@ -43,7 +44,7 @@
 ## @seealso{niftiread, niftiwrite}
 ## @end deftypefn
 
-function niiheader = niiformat(format)
+function niiheader = niiformat (format)
 
   header.nifti1 = {                            ...
                    'int32'   [1 1]  'sizeof_hdr'      # !< MUST be 348           #  # int sizeof_hdr;       #  ...
@@ -137,12 +138,12 @@ function niiheader = niiformat(format)
     format = 'nifti1';
   endif
 
-  format = lower(format);
+  format = lower (format);
 
-  if (isfield(header, format))
+  if (isfield (header, format))
     niiheader = header.(format);
   else
-    error('format must be either nifti1 or nifti2');
+    error ('niiformat: format must be either nifti1 or nifti2');
   endif
 
 endfunction

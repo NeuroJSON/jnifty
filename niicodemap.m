@@ -31,6 +31,7 @@
 ## output:
 ##   @var{newval}:the converted header value
 ##
+## example code:
 ## @example:
 ##   newval=niicodemap('slice_code', '')
 ##   newval=niicodemap('datatype', 'uint64')
@@ -40,16 +41,16 @@
 ## @seealso{niftiread, niftiwrite}
 ## @end deftypefn
 
-function newval = niicodemap(name, value)
+function newval = niicodemap (name, value)
 
   # code to name look-up-table
 
-  if (~exist('containers.Map'))
+  if (~exist ('containers.Map'))
     newval = value;
     return
   endif
 
-  lut.intent_code = containers.Map([0, 2:24 1001:1011 2001:2005], ...
+  lut.intent_code = containers.Map ([0, 2:24 1001:1011 2001:2005], ...
                                    {'', 'corr', 'ttest', 'ftest', 'zscore', 'chi2', 'beta', ...
                                     'binomial', 'gamma', 'poisson', 'normal', 'ncftest', ...
                                     'ncchi2', 'logistic', 'laplace', 'uniform', 'ncttest', ...
@@ -58,17 +59,17 @@ function newval = niicodemap(name, value)
                                     'matrix', 'symmatrix', 'dispvec', 'vector', 'point', 'triangle', ...
                                     'quaternion', 'unitless', 'tseries', 'elem', 'rgb', 'rgba', 'shape'});
 
-  lut.slice_code = containers.Map(0:6, {'', 'seq+', 'seq-', 'alt+', 'alt-', 'alt2+', 'alt-'});
+  lut.slice_code = containers.Map (0:6, {'', 'seq+', 'seq-', 'alt+', 'alt-', 'alt2+', 'alt-'});
 
-  lut.datatype = containers.Map([0, 2, 4, 8, 16, 32, 64, 128, 256, 512, 768, 1024, 1280, 1536, 1792, 2048, 2304], ...
+  lut.datatype = containers.Map ([0, 2, 4, 8, 16, 32, 64, 128, 256, 512, 768, 1024, 1280, 1536, 1792, 2048, 2304], ...
                                 {'', 'uint8', 'int16', 'int32', 'single', 'complex64', 'double', 'rgb24', 'int8', ...
                                  'uint16', 'uint32', 'int64', 'uint64', 'double128', 'complex128', ...
                                  'complex256', 'rgba32' });
 
-  lut.xyzt_units = containers.Map([0:3 8 16 24 32 40 48], ...
+  lut.xyzt_units = containers.Map ([0:3 8 16 24 32 40 48], ...
                                   {'', 'm', 'mm', 'um', 's', 'ms', 'us', 'hz', 'ppm', 'rad'});
 
-  lut.qform = containers.Map(0:4, {'', 'scanner', 'aligned', 'talairach', 'mni'});
+  lut.qform = containers.Map (0:4, {'', 'scanner', 'aligned', 'talairach', 'mni'});
 
   lut.unit = lut.xyzt_units;
   lut.sform = lut.qform;
@@ -77,11 +78,11 @@ function newval = niicodemap(name, value)
 
   # inverse look up table
 
-  tul.intent_code = containers.Map(values(lut.intent_code), keys(lut.intent_code));
-  tul.slice_code = containers.Map(values(lut.slice_code), keys(lut.slice_code));
-  tul.datatype = containers.Map(values(lut.datatype), keys(lut.datatype));
-  tul.xyzt_units = containers.Map(values(lut.xyzt_units), keys(lut.xyzt_units));
-  tul.qform = containers.Map(values(lut.qform), keys(lut.qform));
+  tul.intent_code = containers.Map (values(lut.intent_code), keys(lut.intent_code));
+  tul.slice_code = containers.Map (values(lut.slice_code), keys(lut.slice_code));
+  tul.datatype = containers.Map (values(lut.datatype), keys(lut.datatype));
+  tul.xyzt_units = containers.Map (values(lut.xyzt_units), keys(lut.xyzt_units));
+  tul.qform = containers.Map (values(lut.qform), keys(lut.qform));
 
   tul.sform = tul.qform;
   tul.slicetype = tul.slice_code;
@@ -90,14 +91,19 @@ function newval = niicodemap(name, value)
 
   # map from code to name, or frmo name to code
 
-  if (~isfield(lut, lower(name)))
-    error('property can not be found');
+  if (~isfield (lut, lower (name)))
+    error ('niicodemap: property can not be found');
   endif
 
-  if (~(ischar(value) || isa(value, 'string')))
-    newval = lut.(lower(name))(value);
+  if (~(ischar (value) || isa (value, 'string')))
+    newval = lut.(lower (name))(value);
   else
-    newval = tul.(lower(name))(value);
+    newval = tul.(lower (name))(value);
   endif
 
 endfunction
+
+%!test
+%! urlwrite('https://nifti.nimh.nih.gov/nifti-1/data/minimal.nii.gz', [tempdir 'minimal.nii.gz']);
+%! header=niftiinfo([tempdir 'minimal.nii.gz']);
+%! assert (header.ImageSize,uint16([64 64 10]));
