@@ -220,7 +220,7 @@ if(regexp(filename,'\.[Hh][Dd][Rr](\.[Gg][Zz])*$'))
     filename=regexprep(filename,'\.[Hh][Dd][Rr](\.[Gg][Zz])*$','.img$1');
 end
 
-imgbytenum=prod(nii.hdr.dim(2:nii.hdr.dim(1)+1))*nii.voxelbyte;
+imgbytenum=prod(double(nii.hdr.dim(2:nii.hdr.dim(1)+1)))*nii.voxelbyte;
 
 if(isnii==0 && ~isempty(regexp(filename,'\.[Gg][Zz]$', 'once')))
     finput=fopen(filename,'rb');

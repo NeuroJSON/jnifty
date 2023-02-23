@@ -9,9 +9,9 @@ if(isfield(nii0.hdr,'data_type'))
     nii.NIFTIHeader.A75SessionError=nii0.hdr.session_error;
     nii.NIFTIHeader.A75Regular=     nii0.hdr.regular;
 end
-nii.NIFTIHeader.DimInfo.Freq=   bitand(nii0.hdr.dim_info,7);
-nii.NIFTIHeader.DimInfo.Phase=  bitand(bitshift(nii0.hdr.dim_info,-3),7);
-nii.NIFTIHeader.DimInfo.Slice=  bitand(bitshift(nii0.hdr.dim_info,-6),7);
+nii.NIFTIHeader.DimInfo.Freq=   bitand(uint8(nii0.hdr.dim_info),7);
+nii.NIFTIHeader.DimInfo.Phase=  bitand(bitshift(uint8(nii0.hdr.dim_info),-3),7);
+nii.NIFTIHeader.DimInfo.Slice=  bitand(bitshift(uint8(nii0.hdr.dim_info),-6),7);
 nii.NIFTIHeader.Dim=            nii0.hdr.dim(2:2+nii0.hdr.dim(1)-1);
 nii.NIFTIHeader.Param1=         nii0.hdr.intent_p1;
 nii.NIFTIHeader.Param2=         nii0.hdr.intent_p2;
@@ -30,8 +30,8 @@ nii.NIFTIHeader.ScaleSlope=     nii0.hdr.scl_slope;
 nii.NIFTIHeader.ScaleOffset=    nii0.hdr.scl_inter;
 nii.NIFTIHeader.LastSliceID=    nii0.hdr.slice_end;
 nii.NIFTIHeader.SliceType=      niicodemap('slicetype',nii0.hdr.slice_code);
-nii.NIFTIHeader.Unit.L=         niicodemap('unit',bitand(nii0.hdr.xyzt_units, 7));
-nii.NIFTIHeader.Unit.T=         niicodemap('unit',bitand(nii0.hdr.xyzt_units, 56));
+nii.NIFTIHeader.Unit.L=         niicodemap('unit',bitand(uint8(nii0.hdr.xyzt_units), 7));
+nii.NIFTIHeader.Unit.T=         niicodemap('unit',bitand(uint8(nii0.hdr.xyzt_units), 56));
 nii.NIFTIHeader.MaxIntensity=   nii0.hdr.cal_max;
 nii.NIFTIHeader.MinIntensity=   nii0.hdr.cal_min;
 nii.NIFTIHeader.SliceTime=      nii0.hdr.slice_duration;
