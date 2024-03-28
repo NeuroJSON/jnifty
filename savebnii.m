@@ -5,7 +5,7 @@ function savebnii(jnii, filename, varargin)
 %    savebnii(jniidata, bniifile, 'Param1',value1, 'Param2',value2,...)
 %
 %    Save an in-memory JNIfTI structure into a binary-JNIfTI file with format
-%    defined in JNIfTI specification: https://github.com/fangq/jnifti
+%    defined in JNIfTI specification: https://github.com/NeuroJSON/jnifti
 %
 %    author: Qianqian Fang (q.fang <at> neu.edu)
 %
@@ -19,7 +19,7 @@ function savebnii(jnii, filename, varargin)
 %                jnii.NIFTIData - the main image data array
 %                jnii.NIFTIExtension - a cell array contaiing the extension data buffers
 %        filename: the output file name to the binary-JNIfTI file (.bnii)
-%        options: (optional) if saving to .bnii, please see the 
+%        options: (optional) if saving to .bnii, please see the
 %               supported options for savebj.m (part of JSONLab).
 %
 %    example:
@@ -27,17 +27,17 @@ function savebnii(jnii, filename, varargin)
 %        savebnii(jnii, 'magic10.bnii')
 %        savebnii(jnii, 'magic10_debug.bnii','Debug',1)
 %
-%    this file is part of JNIfTI specification: https://github.com/fangq/jnifti
+%    this file is part of JNIfTI specification: https://github.com/NeuroJSON/jnifti
 %
-%    License: Apache 2.0, see https://github.com/fangq/jnifti for details
+%    License: Apache 2.0, see https://github.com/NeuroJSON/jnifti for details
 %
 
-if(nargin<2)
+if (nargin < 2)
     error('you must provide data and output file name');
 end
 
-if(~exist('savebj','file'))
+if (~exist('savebj', 'file'))
     error('you must first install JSONLab from http://github.com/fangq/jsonlab/');
 end
 
-savebj('',jnii,'FileName',filename,varargin{:});
+savebj('', jnii, 'FileName', filename, varargin{:});

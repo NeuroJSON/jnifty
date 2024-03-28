@@ -1,9 +1,9 @@
 # JNIfTI Toolbox - Fast and portable NIfTI-1/2 reader and NIfTI-to-JNIfTI converter
 
-* Copyright (C) 2019-2020  Qianqian Fang <q.fang at neu.edu>
+* Copyright (C) 2019-2024  Qianqian Fang <q.fang at neu.edu>
 * License: GNU General Public License version 3 (GPL v3) or Apache License 2.0, see License*.txt
 * Version: 0.6 (Epica)
-* URL: http://github.com/fangq/jnifti
+* URL: http://github.com/NeuroJSON/jnifti
 
 ## Overview
 
@@ -14,7 +14,7 @@ files (`.hdr/.img` and `.hdr.gz/.img.gz`).
 
 More importantly, this is a toolbox that converts NIfTI data to its JSON-based
 replacement, JNIfTI (`.jnii` for text-based and `.bnii` for binary-based), defined
-by the JNIfTI specification (http://github.com/fangq/jnifti). JNIfTI is a 
+by the JNIfTI specification (http://github.com/NeuroJSON/jnifti). JNIfTI is a 
 much more flexible, human-readable and extensible file format compared to the
 more rigid and opaque NIfTI format, making the data much easier to manipulate
 and share.
@@ -37,7 +37,7 @@ one need to install the open-source JSONLab and ZMat toolboxes, both supporting
 MATLAB and Octave. They can be downloaded at
 
 * JSONLab: http://github.com/fangq/jsonlab
-* ZMat: http://github.com/fangq/zmat
+* ZMat: http://github.com/NeuroJSON/zmat
 
 To save NIfTI-1/2 data as JNIfTI files, one needs to install JSONLab. The JNIfTI
 data format supports internal compression (as oppose to external compression such
