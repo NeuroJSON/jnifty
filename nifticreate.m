@@ -55,7 +55,7 @@ function header = nifticreate (img, format)
   header.sizeof_hdr = cast (headerlen, class (header.sizeof_hdr));
   header.datatype = cast (datatype.(class (img)), class (header.datatype));
   header.dim(1:end) = cast (1, class (header.dim));
-  header.dim(1:ndims(img) + 1) = cast ([ndims(img), size (img)], class (header.dim));
+  header.dim(1:ndims(img) + 1) = cast ([ndims(img), size(img)], class (header.dim));
   header.pixdim(1:ndims(img) + 1) = cast (1, class (header.pixdim));
   header.vox_offset = cast (headerlen + 4, class (header.vox_offset));
   if (header.sizeof_hdr == 540)
