@@ -36,7 +36,7 @@ To process gzip-compressed NIfTI/Analyze files in Octave and MATLAB with `-nojvm
 one need to install the open-source JSONLab and ZMat toolboxes, both supporting
 MATLAB and Octave. They can be downloaded at
 
-* JSONLab: http://github.com/fangq/jsonlab
+* JSONLab: http://github.com/NeuroJSON/jsonlab
 * ZMat: http://github.com/NeuroJSON/zmat
 
 To save NIfTI-1/2 data as JNIfTI files, one needs to install JSONLab. The JNIfTI
