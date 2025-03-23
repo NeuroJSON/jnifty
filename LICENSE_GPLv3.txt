@@ -1,8 +1,8 @@
 ===============================================================================
-=                      Monte Carlo eXtreme (MCX) -- CUDA                      =
+=  JNIfTI -- Fast and portable NIfTI-1/2 reader/writer for MATLAB and Octave  =
 ===============================================================================
 
-Copyright (c) 2010-2019  Qianqian Fang <q.fang at neu.edu>
+Copyright (c) 2019-2025  Qianqian Fang <q.fang at neu.edu>
 
 -------------------------------------------------------------------------------
 

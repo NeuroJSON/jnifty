@@ -1,7 +1,7 @@
-Name: jnifti
-Version: 0.6.1
-Date: 2020-15-06
-Title: fast NIfTI-1/2 reader and NIfTI-to-JNIfTI converter for MATLAB/Octave
+Name: jnifty
+Version: 0.8.0
+Date: 2025-23-03
+Title: Fast NIfTI-1/2 reader/writer and NIfTI-to-JNIfTI converter for MATLAB/Octave
 Author: Qianqian Fang <fangqq@gmail.com>
 Maintainer: Qianqian Fang <fangqq@gmail.com>
 Description: JNIfTI Toolbox is a fully functional NIfTI-1/2 reader/writer that supports both
@@ -10,7 +10,7 @@ Description: JNIfTI Toolbox is a fully functional NIfTI-1/2 reader/writer that s
  files (.hdr/.img and .hdr.gz/.img.gz). 
  More importantly, this is a toolbox that converts NIfTI data to its JSON-based
  replacement, JNIfTI (.jnii for text-based and .bnii for binary-based), defined
- by the JNIfTI specification (http://github.com/NeuroJSON/jnifti). JNIfTI is a
+ by the JNIfTI specification (https://github.com/NeuroJSON/jnifty). JNIfTI is a
  much more flexible, human-readable and extensible file format compared to the
  more rigid and opaque NIfTI format, making the data much easier to manipulate
  and share.

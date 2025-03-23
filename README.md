@@ -1,9 +1,15 @@
-# JNIfTI Toolbox - Fast and portable NIfTI-1/2 reader and NIfTI-to-JNIfTI converter
+![image](https://neurojson.org/wiki/upload/neurojson_banner_long.png)
 
-* Copyright (C) 2019-2024  Qianqian Fang <q.fang at neu.edu>
+# JNIfTI Toolbox - Fast and portable NIfTI-1/2 reader/writer for MATLAB and Octave
+
+* Copyright (C) 2019-2025  Qianqian Fang <q.fang at neu.edu>
 * License: GNU General Public License version 3 (GPL v3) or Apache License 2.0, see License*.txt
-* Version: 0.6 (Epica)
-* URL: http://github.com/NeuroJSON/jnifti
+* Version: 0.8 (Tree of Life)
+* URL: https://github.com/NeuroJSON/jnifty
+* Compatibility: MATLAB R2008a or newer, or Octave 4.0 and newer
+* JNIfTI Specification Version: V1 Draft-2 (https://neurojson.org/jnifti/draft2)
+* Acknowledgement: This project is supported by US National Institute of Health (NIH)
+  grant [U24-NS124027 (NeuroJSON)](https://reporter.nih.gov/project-details/10308329)
 
 ## Overview
 
@@ -14,7 +20,7 @@ files (`.hdr/.img` and `.hdr.gz/.img.gz`).
 
 More importantly, this is a toolbox that converts NIfTI data to its JSON-based
 replacement, JNIfTI (`.jnii` for text-based and `.bnii` for binary-based), defined
-by the JNIfTI specification (http://github.com/NeuroJSON/jnifti). JNIfTI is a 
+by the JNIfTI specification (https://github.com/NeuroJSON/jnift). JNIfTI is a 
 much more flexible, human-readable and extensible file format compared to the
 more rigid and opaque NIfTI format, making the data much easier to manipulate
 and share.
@@ -24,7 +30,7 @@ and share.
 The JNIfTI toolbox includes a stand-alone NIfTI-1/2 parser that works on both
 MATLAB and GNU Octave without needing additional components. To just reading and
 writing the un-compressed NIfTI and Analyze7.5 files (.nii, .hdr/.img), one 
-only needs to run `addpath('/path/to/jnifti')`. For MATLAB, JNIfTI toolbox
+only needs to run `addpath('/path/to/jnifty')`. For MATLAB, JNIfTI toolbox
 utilizes `memmapfile`-based disk-reading, making it very fast. For Octave, 
 `memmapfile` is currently not implemented, so, a full reading is required.
 
@@ -32,17 +38,12 @@ The JNIfTI toolbox is also capable of reading/writing gzip-compressed NIfTI and
 Analyze7.5 files (`.nii.gz, .hdr.gz, .img.gz`). This feature is supported in MATLAB
 directly without needing another toolbox (MATLAB must be in the JVM-enabled mode).
 
-To process gzip-compressed NIfTI/Analyze files in Octave and MATLAB with `-nojvm`,
-one need to install the open-source JSONLab and ZMat toolboxes, both supporting
-MATLAB and Octave. They can be downloaded at
-
-* JSONLab: http://github.com/NeuroJSON/jsonlab
-* ZMat: http://github.com/NeuroJSON/zmat
-
 To save NIfTI-1/2 data as JNIfTI files, one needs to install JSONLab. The JNIfTI
 data format supports internal compression (as oppose to external compression such
-as `*.gz` files). To create or read compressed JNIfTI files in Octave, one must 
-install the ZMat toolbox, as listed above.
+as `*.gz` files).
+
+To create or read compressed NIfTI/JNIfTI files in Octave, one may install the
+ZMat toolbox (https://github.com/NeuroJSON/zmat), although it is optional.
 
 ## Usage
 
@@ -63,29 +64,29 @@ Example:
 ### `savenifti` - To write an image as NIfTI-1/2 (.nii or .nii.gz) file
 Example:
 ```
-  savenifti(img,'test.nii.gz');         % save an array img to a compressed nifti file
+  savenifti(img, 'test.nii.gz');        % save an array img to a compressed nifti file
   savenifti(img, 'test.nii', 'nifti2'); % save an array img to a nifti-2 file file
   savenifti(img, 'test.nii', header);   % save an array img with an existing header
 ```
 ### `loadjnifti` - To read a JNIfTI (.jnii or .bnii) file
 Example:
 ```
-  jnii=nii2jnii('test.nii.gz');
-  savejnifti(jnii, 'magic10.bnii','Compression','gzip');
-  newjnii=loadjnifti('magic10.bnii');
+  jnii = nii2jnii('test.nii.gz');
+  savejnifti(jnii, 'magic10.bnii', 'Compression', 'gzip');
+  newjnii = loadjnifti('magic10.bnii');
 ```
 ### `savejnifti` - To write a JNIfTI structure into a file (.jnii or .bnii)
 Example:
 ```
-  jnii=jnifticreate(uint8(magic(10)),'Name','10x10 magic matrix');
+  jnii = jnifticreate(uint8(magic(10)), 'Name', '10x10 magic matrix');
   savejnifti(jnii, 'magic10.jnii');
-  savejnifti(jnii, 'magic10_debug.bnii','Compression','gzip');
+  savejnifti(jnii, 'magic10_debug.bnii', 'Compression', 'gzip');
 ```
 ### `jnii2nii` - To convert a JNIfTI file or data structure to a NIfTI-1/2 file
 Example:
 ```
-  nii=jnii2nii('test.jnii');             % read a .jnii file as an nii structure
-  nii=jnii2nii('test.bnii');             % read a .bnii file as an nii structure
+  nii = jnii2nii('test.jnii');             % read a .jnii file as an nii structure
+  nii = jnii2nii('test.bnii');             % read a .bnii file as an nii structure
   jnii2nii('test.jnii', 'newdata.nii.gz'); % read a text-JNIfTI file to an .nii.gz file
-  jnii2nii('test.bnii', 'newdata.nii'); % read a text-JNIfTI file to an .nii file
+  jnii2nii('test.bnii', 'newdata.nii');    % read a text-JNIfTI file to an .nii file
 ```
