@@ -1,0 +1,46 @@
+= Change Log =
+
+Major updates are marked with a "*"
+
+== JNIFTY v0.8 (Tree of Life), FangQ <q.fang (a) neu.edu> ==
+
+ 2025-03-23 [e243cc7] [doc] update README, make examples self-contained
+ 2025-03-23*[905f87e] [release] update all units for v0.8 release, use 'z' flag in octavezmat, support JNIFTI Draft 2
+ 2025-02-05 [1faaf18] [bug] fix int16 type typo, fangq/iso2mesh#83
+ 2024-10-02 [096136c] [doc] update upstream repository to NeuroJSON
+ 2024-03-27 [f3a535d] [doc] add DESCRIPTION and INDEX
+ 2024-03-27*[aec438c] [format] reformat the code with miss_hit
+ 2024-01-15*[ce0d20a] [bug] fix loading nii.gz with extension
+ 2023-02-23*[1aa7dcf] make jnifty compatible with MATLAB R2010b
+ 2023-02-21 [4c2185f] separate nii header to jnii header conversion
+ 2022-03-12 [e61b802] remove redundant line
+ 2022-03-11 [f062d50] add _DataInfo_ header, add usemap option to memmapstream
+
+== JNIFTY v0.6 (Epica), FangQ <q.fang (a) neu.edu> ==
+
+ 2022-02-09 [f5ea181] sync with the version in jnifti repo
+ 2019-11-29 [d590fb3] add jnii2nii to convert jnii back to nii for compatibility
+
+== JNIFTY v0.5 (Ascendance), FangQ <q.fang (a) neu.edu> ==
+
+ 2019-09-13 [c3aa8bf] jnifti toolbox v0.5
+ 2019-09-13 [fdfaa23] change gitlab links to github
+ 2019-09-13 [214f099] add README for the JNIfTI toolbox
+ 2019-09-12 [5b9e0d8] complete nifti toolbox for reading and writing, will submit to octave
+ 2019-09-11 [bd863c5] add help info to memmapstream
+ 2019-09-11 [afef46d] JNIFTI MATLAB library is now supports .nii.gz and Octave
+ 2019-06-21 [64268f3] handle endianness,add bilateral mapping from code to human-readable strings
+ 2019-06-18 [e4a701e] update jnifti encoder and decoder and all examples with the new header names
+ 2019-06-18 [bd367ef] define string forms for SliceType, Intent, add meaningful Orientation, merge Quatern into structs
+ 2019-06-18 [5d825f6] depreciate NIIHeaderSize and NIIByteOffset in new JNIfTI files
+ 2019-06-18 [8329e8c] depreciates DataTypeName, rename to A75DataTypeName
+ 2019-06-18 [8d1bb44] add nifti-2 example
+ 2019-06-18 [044bf2a] properly read NIFTI-2 extension flags
+ 2019-06-14 [2283985] add origin for nii2jnii.m
+ 2019-06-14 [a8b0095] convert all sample code using the new unified save/load interfaces
+ 2019-06-14 [6370991] add importer and exporter for jnifti files
+ 2019-06-14 [4301bee] jnifticreate header only mode
+ 2019-06-14 [b088f4e] polishing help info for nii2jnii
+ 2019-06-14 [089a703] support nift-2 in nii2jnii, add headct example from mricrogl sample data
+ 2019-06-13 [a1c932c] add matlab file to create jnii header, add 3 examples
+ 2019-06-13 [03c5568] add matlab converter from nii to jnifti
